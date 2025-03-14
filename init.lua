@@ -196,22 +196,26 @@ local function run_all_files()
                 components = { "default", "on_output_quickfix", "on_complete_notify" },
             })
             table.insert(tasks, run_task)
-        elseif file:match("%.cpp$") then
-            local compile_task = overseer.new_task({
-                name = "Compile " .. file,
-                cmd = { "g++", file, "-o", output_binary },
-                cwd = vim.fn.getcwd(),
-                components = { "default", "on_output_quickfix", "on_complete_notify" },
-            })
-            table.insert(tasks, compile_task)
 
-            local run_task = overseer.new_task({
-                name = "Run " .. file,
-                cmd = { "./" .. output_binary },
-                cwd = vim.fn.getcwd(),
-                components = { "default", "on_output_quickfix", "on_complete_notify" },
-            })
-            table.insert(tasks, run_task)
+elseif file:match("%.cpp$") then
+  local compile_task = overseer.new_task({
+      name = "Compile " .. file,
+      cmd = { "g++", file, "-o", output_binary },
+      cwd = vim.fn.getcwd(),
+      components = { "default", "on_output_quickfix", "on_complete_notify" },
+  })
+
+  local absolute_output = vim.fn.getcwd() .. "/" .. output_binary
+  local run_task = overseer.new_task({
+      name = "Run " .. file,
+      cmd = { absolute_output },
+      cwd = vim.fn.getcwd(),
+      components = { "default", "on_output_quickfix", "on_complete_notify" },
+      depends = { compile_task },  -- Ensure it only runs after compiling
+  })
+
+  table.insert(tasks, compile_task)
+  table.insert(tasks, run_task)
         elseif file:match("%.py$") then
             local task = overseer.new_task({
                 name = "Run " .. file,
