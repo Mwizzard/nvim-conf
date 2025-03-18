@@ -17,6 +17,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+vim.cmd [[
+  autocmd BufRead,BufNewFile *.as setfiletype asm
+]]
 
 -- Setup lazy.nvim first
 require("lazy").setup("plugins")

@@ -10,6 +10,9 @@ vim.opt.softtabstop = 2
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
+vim.cmd [[
+  autocmd BufRead,BufNewFile *.as setfiletype asm
+]]
 
 local function change_kitty_font_size(size)
   local handle = io.popen("kitty @ set-font-size " .. size)
